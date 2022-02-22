@@ -1,70 +1,57 @@
-# Getting Started with Create React App
+# React redux store design
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+practice redux middleware, and store design
 
-## Available Scripts
+## What I learned
 
-In the project directory, you can run:
+redux middleware, and store design
 
-### `npm start`
+### redux middleware
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+`Action Creator` -> `Action` -> `dispatch` -> **`Middleware`** -> `Reducers` -> `State`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Function that gets called with every action we dispatch
+- Has the ability to **STOP, MODIFY**, or otherwise mess around with actions
+- Tons of open source middleware exist
+- Most popular use of middleware is for dealing with async actions
 
-### `npm test`
+### redux thunk
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Middleware to help us make requests in a redux app
+- needs on API requests part
+- Reason why we need redux-thunk
+  - Action creator must return plain JS objects with at type property (async-await doesn't make it)
+  - by the time our action gets to a reducer, we won't have fetched out data
+- Action creators can return action object or `functions`
+  - if an action is `function`
+  - function invoked with 'dispatch'
+  - wait for request to finish
+  - dispatch action manually
+  - New Action
 
-### `npm run build`
+### Store design
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Rules of Reducers
+  - Must return any value besides 'undefined'
+  - Produces 'state', or data to be used inside of your app using only previous state and the action
+  - Must not return reach 'out of itself' to decide what value to return (reducers are pure)
+  - Must not mutate its input 'state' argument
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```js
+// Removing an element from an array
+state.filter(element => element !== "hi")
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+// Adding an element to an array
+[...state, "hi"]
 
-### `npm run eject`
+// Replacing an element in an array
+state.map(el => el === "hi" ? "bye" : el)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+// same process on object
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### fetch problem
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- firstly get posts
+- get userId using a Set from posts
+- make users state using the Set
